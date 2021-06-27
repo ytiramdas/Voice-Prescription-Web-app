@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="content padL10per">
+        {% if type %}
+            <h1>Welcome {{ type }}</h1>
+        {% endif %}
+        <br>
+        <div>
+            <a type="button" class="btn btn-outline-info" href="{{ url_for('prescription') }}">
+                Create Prescription
+            </a>
+        </div>
+        <br>
+        <div>
+            <a type="button" class="btn btn-outline-info" href="{{ url_for('doctorhistory') }}">
+                History
+            </a>
+        </div>
+        
+    </div>
+{% endblock content %}

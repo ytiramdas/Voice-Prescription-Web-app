@@ -1,0 +1,139 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="content-section padL10per">
+        <div class="Container">
+            <a type="button" class="btn btn-outline-info" href="{{ url_for('getprescriptionfordoctor')}}">
+                Get recent prescriptions of patient
+            </a>
+        </div>
+        <form method="POST" action="" novalidate>
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group row col-lg-8 col-md-8">
+                <legend class="border-bottom mb-4 col-lg-12 col-md-12 col-sm-12">Create Prescription</legend>
+                <div class="form-group col-lg-6 col-md-6">
+                    {{ form.first_name.label(class="form-label") }}
+                    {% if form.first_name.errors %}
+                        {{ form.first_name(class="form-control is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.first_name.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.first_name(class="form-control ") }}
+                    {% endif %}
+                </div>
+                <div class="form-group col-lg-6 col-md-6">
+                    {{ form.last_name.label(class="form-label") }}
+                    {% if form.last_name.errors %}
+                        {{ form.last_name(class="form-control  is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.last_name.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.last_name(class="form-control ") }}
+                    {% endif %}
+                </div>
+                <div class="form-group col-lg-6 col-md-6">
+                    {{ form.age.label(class="form-label") }}
+                    {% if form.age.errors %}
+                        {{ form.age(class="form-control  is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.age.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.age(class="form-control ") }}
+                    {% endif %}
+                </div>
+                <div class="form-group col-lg-6 col-md-6">
+                    {{ form.gender.label(class="form-label") }}
+                    {% if form.gender.errors %}
+                        {{ form.gender(class="form-control  is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.gender.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.gender(class="form-control ") }}
+                    {% endif %}
+                </div>
+                <div class="form-group col-lg-6 col-md-6">
+                    {{ form.prescription_number.label(class="form-label") }}
+                    {% if form.prescription_number.errors %}
+                        {{ form.prescription_number(class="form-control  is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.prescription_number.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.prescription_number(class="form-control ") }}
+                    {% endif %}
+                </div>
+                <div class="form-group col-lg-12 col-md-12">
+                    {{ form.medicines.label(class="form-label") }}
+                    {% if form.medicines.errors %}
+                        {{ form.medicines(class="form-control is-invalid txtareastyle", rows=15) }}
+                        <div class="invalid-feedback">
+                            {% for error in form.medicines.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.medicines(class="form-control ") }}
+                    {% endif %}
+                </div>
+                <div class="form-group col-lg-12 col-md-12">
+                    {{ form.symptoms.label(class="form-label") }}
+                    {% if form.symptoms.errors %}
+                        {{ form.symptoms(class="form-control is-invalid txtareastyle", rows=7) }}
+                        <div class="invalid-feedback">
+                            {% for error in form.symptoms.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.symptoms(class="form-control ") }}
+                    {% endif %}
+                </div>
+                <div class="form-group col-lg-6 col-md-6">
+                    {{ form.diagnosis.label(class="form-label") }}
+                    {% if form.diagnosis.errors %}
+                        {{ form.diagnosis(class="form-control  is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.diagnosis.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.diagnosis(class="form-control ") }}
+                    {% endif %}
+                </div>
+                <div class="form-group col-lg-6 col-md-6">
+                    {{ form.advice.label(class="form-label") }}
+                    {% if form.advice.errors %}
+                        {{ form.advice(class="form-control  is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.advice.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.advice(class="form-control ") }}
+                    {% endif %}
+                </div>
+            </fieldset>
+            <div class="form-group col-lg-8 col-md-8" style="padding-top: 10px;">
+                {{ form.submit(class="btn btn-outline-info") }}
+            </div>
+            <small class="text-muted ml-2 col-lg-8 col-md-8" style="padding-top: 10px;">
+                Check all the details before creating a prescription!
+            </small>
+        </form>
+    </div>
+{% endblock content %}

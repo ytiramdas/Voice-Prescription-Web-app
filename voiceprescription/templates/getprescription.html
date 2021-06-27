@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="content padL10per">
+        <div class="padTB24"></div>
+        <h1>Patient History</h1>
+        {% for prescription in prescriptions %}
+        <table>
+            <caption></caption>
+            <tbody>
+                <tr>
+                    <td><strong>Doctor Name: </strong>{{prescription.doctor_name}}</td>
+                    <td><strong>Date: </strong>{{prescription.date_of_diagnosis}}</td>
+                </tr>
+                <tr>
+                    <td><strong>Patient Name: </strong>{{prescription.patient_name}}</td>
+                </tr>
+                <tr>
+                    <td><strong>Medicine: </strong>{{prescription.prescription}}</td>
+                </tr>
+                <tr>
+                    <td><strong>Diagnosis: </strong>{{prescription.diagnosis}}</td>
+                </tr>
+                <tr>
+                    <td><strong>Symptoms: </strong>{{prescription.symptoms}}</td>
+                </tr>
+                <tr>
+                    <td><strong>Advice: </strong>{{prescription.advice}}</td>
+                </tr>
+                <tr>
+                    <td><strong>Signature: </strong>{{prescription.signature}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <br/>
+        {% endfor %}
+    </div>
+{% endblock content %}

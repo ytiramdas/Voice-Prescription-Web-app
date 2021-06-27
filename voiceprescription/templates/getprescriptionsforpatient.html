@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="content padL10per">
+    <div class="padTB24"></div>
+    <form action="">
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+            <label class="form-check-label" for="inlineRadio1">1 week</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+            <label class="form-check-label" for="inlineRadio1">1 month</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+            <label class="form-check-label" for="inlineRadio1">2 months</label>
+        </div>
+    </form>
+    <br>
+    {% for prescription in prescriptions %}
+    <table>
+        <caption></caption>
+        <tbody>
+            <tr>
+                <td><strong>Doctor Name: </strong>{{prescription.doctor_name}}</td>
+                <td><strong>Date: </strong>{{prescription.date_of_diagnosis}}</td>
+            </tr>
+            <tr>
+                <td><strong>Patient Name: </strong>{{prescription.patient_name}}</td>
+            </tr>
+            <tr>
+                <td><strong>Medicine: </strong>{{prescription.prescription}}</td>
+            </tr>
+            <tr>
+                <td><strong>Diagnosis: </strong>{{prescription.diagnosis}}</td>
+            </tr>
+            <tr>
+                <td><strong>Symptoms: </strong>{{prescription.symptoms}}</td>
+            </tr>
+            <tr>
+                <td><strong>Advice: </strong>{{prescription.advice}}</td>
+            </tr>
+            <tr>
+                <td><strong>Signature: </strong>{{prescription.signature}}</td>
+            </tr>
+        </tbody>
+    </table>
+    <br />
+    {% endfor %}
+</div>
+{% endblock content %}
