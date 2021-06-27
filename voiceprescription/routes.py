@@ -37,8 +37,8 @@ def home():
 
 @app.route('/login')
 def login():
-    if current_user.is_authenticated:
-        return redirect(url_for('main.home'))
+    # if current_user.is_authenticated:
+    #     return redirect(url_for('main.home'))
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
@@ -48,7 +48,7 @@ def login():
             return redirect(next_page) if next_page else redirect(url_for('main.home'))
         else:
             flash('Login Unsuccessful. Please check username and password.', 'danger')
-    return render_template('login_password.html', title='Login', form=form)
+    return render_template('login.html', title='Login', form=form)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -63,6 +63,10 @@ def register():
         flash(f'Account created. You can now login.', 'success')
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
+
+@app.route('/reset_password', methods=['GET', 'POST'])
+def reset_request():
+    return "<h1>reset password<h1>"
 
 @app.route('/homedoctor')
 def homedoctor():
