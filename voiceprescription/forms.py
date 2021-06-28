@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, validators, SelectField, TextAreaField, DateField, RadioField
 from flask_wtf.file import FileField, FileAllowed
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
-from voiceprescription.models import User
+from voiceprescription.models import Doctors, User
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
@@ -30,6 +30,11 @@ class RegistrationForm(FlaskForm):
         user = User.query.filter_by(email=email.data).first()
         if user:
             raise ValidationError('That email is already taken. Please choose another.')
+
+    def validate_license_no(self, license_no):
+        user = Doctors.query.filter_by(license_no=license_no.data).first()
+        if user:
+            raise ValidationError('An account has already been created with this licence number')
 
 
 class LoginForm(FlaskForm):

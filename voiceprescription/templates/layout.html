@@ -27,12 +27,23 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarToggle">
                     <div class="navbar-nav mr-auto">
+                        {% if current_user.is_authenticated %}
+                            {% if current_user.type=='p' %}
+                            <a class="nav-item nav-link" href="{{ url_for('homepatient') }}">Home</a>
+                            {% else %}
+                            <a class="nav-item nav-link" href="{{ url_for('homedoctor') }}">Home</a>
+                            {% endif %}
+                        {% else %}
                         <a class="nav-item nav-link" href="{{ url_for('home') }}">Home</a>
-                        <a class="nav-item nav-link" href="#">About</a>
+                        {% endif %}
                     </div>
                     <div class="navbar-nav">
+                        {% if current_user.is_authenticated %}
+                        <a class="nav-item nav-link" href="{{ url_for('logout') }}">Logout</a>
+                        {% else %}
                         <a class="nav-item nav-link" href="{{ url_for('login') }}">Login</a>
                         <a class="nav-item nav-link" href="{{ url_for('register') }}">Register</a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
