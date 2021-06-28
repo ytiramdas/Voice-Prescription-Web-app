@@ -1,8 +1,32 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, validators, SelectField, TextAreaField, DateField, RadioField
 from flask_wtf.file import FileField, FileAllowed
+from wtforms.fields.core import DateTimeField
+from wtforms.fields.html5 import DateTimeLocalField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from voiceprescription.models import Doctors, User
+
+specialization_chocies = [('Allergists/Immunologists', 'Allergists/Immunologists'), 
+('Anesthesiologists', 'Anesthesiologists'),
+('Cardiologists', 'Cardiologists'),
+('ColonandRectalSurgeons', 'Colon and Rectal Surgeons'),
+('Dermatologists', 'Dermatologists'),
+('Endocrinologists', 'Endocrinologists'),
+('FamilyPhysicians', 'Family Physicians'),
+('GeneralPhysicians', 'General Physicians'),
+('Gastroenterologists', 'Gastroenterologists'),
+('Hematologists', 'Hematologists'),
+('InfectiousDiseaseSpecialists', 'Infectious Disease Specialists'),
+('Internists', 'Internists'),
+('Nephrologists', 'Nephrologists'),
+('Neurologists', 'Neurologists'),
+('ObstetriciansandGynecologists', 'Obstetricians and Gynecologists'),
+('Oncologists', 'Oncologists'),
+('Ophthalmologists', 'Ophthalmologists'),
+('Otolaryngologists', 'Otolaryngologists'),
+('Physiatrists', 'Physiatrists'),
+('Psychiatrists','Psychiatrists'),
+('Urologists', 'Urologists')]
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
@@ -11,7 +35,7 @@ class RegistrationForm(FlaskForm):
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
     type = RadioField('Type of User', choices = ['Patient', 'Doctor'], validators=[DataRequired()])
     
-    specialisation = StringField('Specialization', validators=[DataRequired()])
+    specialisation = SelectField('Specialisation', choices = specialization_chocies, validators=[DataRequired()])
     license_no = StringField('License Number', validators=[DataRequired(), Length(min=8, max=8)])
     license_file = FileField('License File', validators=[FileAllowed(['pdf'])])
     signature_file = FileField('Signature File', validators=[FileAllowed(['jpg', 'png', 'PNG'])])
@@ -73,3 +97,8 @@ class GetPrescriptionsForm(FlaskForm):
     email = StringField('Email',
                         validators=[DataRequired(), Email()])
     submit = SubmitField('Get Prescriptions')
+
+class BookAppointment(FlaskForm):
+    date_of_appointment = DateTimeLocalField('Appointment Date and Time', format='%Y-%m-%dT%H:%M', validators=[DataRequired()])
+    specialisation = SelectField('Specialisation for Consultation', choices = specialization_chocies, validators=[DataRequired()])
+    submit = SubmitField('Book Appointment')

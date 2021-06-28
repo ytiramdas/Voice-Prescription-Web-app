@@ -2,7 +2,7 @@ from inspect import signature
 from flask import render_template, url_for, flash, redirect, current_app, request
 from flask_login import login_user, current_user, logout_user, login_required
 from voiceprescription import app, db, bcrypt
-from voiceprescription.forms import PrescriptionForm, LoginForm, RegistrationForm, GetPrescriptionsForm
+from voiceprescription.forms import BookAppointment, PrescriptionForm, LoginForm, RegistrationForm, GetPrescriptionsForm
 from datetime import date
 from flask.globals import request
 from voiceprescription.models import Doctors, Patients, User
@@ -170,3 +170,17 @@ def getprescription(p_name):
 def doctorhistory():
     patient_info = [i for i in prescriptions if i['doctor_name']=='Corey Schafer']
     return render_template('doctorhistory.html', prescriptions = patient_info)
+
+@app.route('/bookappointment', methods=['GET', 'POST'])
+def bookappointment():
+    form = BookAppointment()
+    if form.validate_on_submit():
+        flash('Appointment is Booked successfully, Check your appointments for confirmation', 'success')
+        print(form.specialisation.data)
+        print(form.date_of_appointment.data)
+        return redirect(url_for('homepatient'))
+    return render_template('bookappointment.html', form=form)
+
+@app.route('/appointments')
+def appointments():
+    return render_template('appointments.html')

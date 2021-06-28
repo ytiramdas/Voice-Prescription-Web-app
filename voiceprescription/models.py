@@ -29,7 +29,7 @@ class Doctors(db.Model):
     signature_file = db.Column(db.String(20), nullable=False)
 
     def __repr__(self):
-        return f"Doctor('{self.id}', '{self.user_id}', '{self.license_no}', '{self.license_file}', '{self.signature_file}')"
+        return f"Doctor('{self.id}', '{self.user_id}', '{self.specialisation}, '{self.license_no}', '{self.license_file}', '{self.signature_file}')"
 
 class Patients(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -43,6 +43,7 @@ class Patients(db.Model):
 class Appointments(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     patient_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    specialisation = db.Column(db.String(30), nullable=False)
     doctor_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     doctor_confirmation = db.Column(db.Integer, nullable=False, default='0')
     time_of_appointment = db.Column(db.DateTime, nullable=False)

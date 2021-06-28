@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="d-flex justify-content-center">
+    <div class="container regform">
+        <div class="content-section">
+            <form method="POST" action="">
+                {{ form.hidden_tag() }}
+                <fieldset class="form-group">
+                    <legend class="border-bottom mb-4">Book appointment</legend>
+                    <div class="form-group">
+                        {{ form.date_of_appointment.label(class="form-control-label") }}
+                        {% if form.date_of_appointment.errors %}
+                        {{ form.date_of_appointment(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.date_of_appointment.errors %}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        {{ form.date_of_appointment(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        {{ form.specialisation.label(class="form-control-label") }}
+                        {% if form.specialisation.errors %}
+                        {{ form.specialisation(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.specialisation.errors %}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        {{ form.specialisation(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+                </fieldset>
+                <div class="form-group">
+                    {{ form.submit(class="btn button-outline") }}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}
