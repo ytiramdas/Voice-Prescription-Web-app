@@ -1,13 +1,24 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, validators, SelectField, TextAreaField, DateField
-from wtforms.validators import DataRequired, Length, Email, EqualTo
-
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, validators, SelectField, TextAreaField, DateField, RadioField
+from flask_wtf.file import FileField, FileAllowed
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
+from voiceprescription.models import User
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
+    type = RadioField('Type of User', choices = ['Patient', 'Doctor'], validators=[DataRequired()])
+    
+    specialisation = StringField('Specialization', validators=[DataRequired()])
+    license_no = StringField('License Number', validators=[DataRequired(), Length(min=8, max=8)])
+    license_file = FileField('License File', validators=[FileAllowed(['pdf'])])
+    signature_file = FileField('Signature File', validators=[FileAllowed(['jpg', 'png', 'PNG'])])
+
+    is_diabetic = RadioField('Is Diabatic', choices = ['Yes', 'No'], validators=[DataRequired()])
+    hypertension = RadioField('Level of Hypertention', choices = ['Low', 'Normal', 'High'], validators=[DataRequired()])
+
     submit = SubmitField('Sign Up')
 
     def validate_username(self, username):

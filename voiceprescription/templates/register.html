@@ -3,7 +3,7 @@
 <div class="d-flex justify-content-center">
     <div class="container regform">
         <div class="content-section">
-            <form method="POST" action="">
+            <form method="POST" action="" novalidate>
                 {{ form.hidden_tag() }}
                 <fieldset class="form-group">
                     <legend class="border-bottom mb-4">Join Today</legend>
@@ -60,6 +60,129 @@
                         {{ form.confirm_password(class="form-control form-control-lg") }}
                         {% endif %}
                     </div>
+                    <div class="form-group">
+                        {{ form.type.label(class="form-control-label") }}<br>
+                        {% if form.type.errors %}
+                        {% for subfield in form.type %}
+                        <div class="form-check form-check-inline is-invalid">
+                            {{ subfield(class="form-check-input") }}
+                            {{ subfield.label }}
+                        </div>
+                        {% endfor %}
+                        <div class="invalid-feedback">
+                            {% for error in form.type.errors %}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        {% for subfield in form.type %}
+                        <div class="form-check form-check-inline">
+                            {{ subfield(class="form-check-input") }}
+                            {{ subfield.label }}
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                    <div id="patient">
+                        <div class="form-group">
+                            {{ form.is_diabetic.label(class="form-control-label") }}<br>
+                            {% if form.is_diabetic.errors %}
+                            {% for subfield in form.is_diabetic %}
+                            <div class="form-check form-check-inline is-invalid">
+                                {{ subfield(class="form-check-input") }}
+                                {{ subfield.label }}
+                            </div>
+                            {% endfor %}
+                            <div class="invalid-feedback">
+                                {% for error in form.is_diabetic.errors %}
+                                <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            {% for subfield in form.is_diabetic %}
+                            <div class="form-check form-check-inline">
+                                {{ subfield(class="form-check-input") }}
+                                {{ subfield.label }}
+                            </div>
+                            {% endfor %}
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            {{ form.hypertension.label(class="form-control-label") }}<br>
+                            {% if form.hypertension.errors %}
+                            {% for subfield in form.hypertension %}
+                            <div class="form-check form-check-inline is-invalid">
+                                {{ subfield(class="form-check-input") }}
+                                {{ subfield.label }}
+                            </div>
+                            {% endfor %}
+                            <div class="invalid-feedback">
+                                {% for error in form.hypertension.errors %}
+                                <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            {% for subfield in form.hypertension %}
+                            <div class="form-check form-check-inline">
+                                {{ subfield(class="form-check-input") }}
+                                {{ subfield.label }}
+                            </div>
+                            {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div id="doctor">
+                        <div class="form-group">
+                            {{ form.specialisation.label(class="form-control-label") }}
+                            {% if form.specialisation.errors %}
+                            {{ form.specialisation(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.specialisation.errors %}
+                                <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            {{ form.specialisation(class="form-control form-control-lg") }}
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            {{ form.license_no.label(class="form-control-label") }}
+                            {% if form.license_no.errors %}
+                            {{ form.license_no(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.license_no.errors %}
+                                <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            {{ form.license_no(class="form-control form-control-lg") }}
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            {{ form.license_file.label(class="form-control-label") }}
+                            <br>
+                            {% if form.license_file.errors %}
+                            {{ form.license_file(class="is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.license_file.errors %}
+                                <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            {{ form.license_file(class="") }}
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            {{ form.signature_file.label(class="form-control-label") }}
+                                {{ form.signature_file(class="form-control-file") }}
+                                {% if form.signature_file.errors %}
+                                {% for error in form.signature_file.errors %}
+                                <span class="text-danger">{{ error }}</span></br>
+                                {% endfor %}
+                                {% endif %}
+                            
+                        </div>
+                    </div>
                 </fieldset>
                 <div class="form-group">
                     {{ form.submit(class="btn button-outline") }}
@@ -74,3 +197,47 @@
     </div>
 </div>
 {% endblock content %}
+
+{% block script %}
+<script>
+    $(document).ready(function () {
+        var val = $('input[type=radio][name=type]').val();
+        $("#patient").hide()
+        $("#doctor").hide()
+        $('input[type=radio][name=type]').click(function () {
+            var demovalue = $(this).val();
+            console.log(demovalue)
+            if (demovalue == "Patient") {
+                $("#patient").show()
+                $("#doctor").hide()
+                $("input[type=text][name=specialisation]").val("None")
+                $("input[type=text][name=license_no]").val("ABCDE123")
+                $("input[type=radio][name=is_diabetic]").val([""])
+                $("input[type=radio][name=hypertension]").val([""])
+            } else {
+                $("#patient").hide()
+                $("#doctor").show()
+                $("input[type=radio][name=is_diabetic]").val(["No"])
+                $("input[type=radio][name=hypertension]").val(["Normal"])
+                $("input[type=text][name=specialisation]").val("")
+                $("input[type=text][name=license_no]").val("")
+            }
+        });
+    });
+    // $('input[type=radio][name=type]').change(function () {
+    //     var demovalue = $(this).val();
+    //     console.log(demovalue)
+    //     if (demovalue == "Patient") {
+    //         $("#patient").show()
+    //         $("#doctor").hide()
+    //         $("input[type=text][name=specialisation]").val = "None"
+    //         $("input[type=text][name=license_no]").val = "ABCDE123"
+    //     } else {
+    //         $("#patient").hide()
+    //         $("#doctor").show()
+    //         $("input[type=radio][name=is_diabetic]").val = "No"
+    //         $("input[type=radio][name=hypertension]").val = "Normal"
+    //     }
+    // });
+</script>
+{% endblock %}

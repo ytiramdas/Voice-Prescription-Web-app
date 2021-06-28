@@ -1,0 +1,20 @@
+from voiceprescription import db, bcrypt
+from voiceprescription.models import User,Doctors,Patients
+
+db.drop_all()
+db.create_all()
+user1 = User(username='Yashi1011', email='yasaswinipandu@gmail.com', password=bcrypt.generate_password_hash('password').decode('utf-8'), type='d')
+user2 = User(username='user1', email='user1@gmail.com', password=bcrypt.generate_password_hash('password').decode('utf-8'), type='p')
+user3 = User(username='user2', email='user2@gmail.com', password=bcrypt.generate_password_hash('password').decode('utf-8'), type='p')
+db.session.add(user1)
+db.session.add(user2)
+db.session.add(user3)
+db.session.commit()
+doc = Doctors(user_id='1', specialisation='General', license_no='ASDF1234', license_file = 'file.pdf', signature_file = 'sign.jpg')
+db.session.add(doc)
+db.session.commit()
+pat1 = Patients(user_id='2', is_diabetic='Yes', hypertension='Low')
+pat2 = Patients(user_id='3', is_diabetic='No', hypertension='Normal')
+db.session.add(pat1)
+db.session.add(pat2)
+db.session.commit()

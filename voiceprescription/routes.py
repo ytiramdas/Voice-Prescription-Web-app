@@ -1,11 +1,14 @@
-from flask import render_template, url_for, flash, redirect
+from inspect import signature
+from flask import render_template, url_for, flash, redirect, current_app
 from flask_login import login_user, current_user, logout_user, login_required
 from voiceprescription import app, db, bcrypt
 from voiceprescription.forms import PrescriptionForm, LoginForm, RegistrationForm, GetPrescriptionsForm
 from datetime import date
 from flask.globals import request
-from voiceprescription.models import User
-
+from voiceprescription.models import Doctors, Patients, User
+from voiceprescription.utils import save_file_licenese, save_file_sign
+from werkzeug.utils import secure_filename
+import os, secrets
 
 prescriptions = [
     {
@@ -35,7 +38,7 @@ prescriptions = [
 def home():
     return render_template('home.html')
 
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     # if current_user.is_authenticated:
     #     return redirect(url_for('main.home'))
@@ -57,9 +60,23 @@ def register():
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = User(username=form.username.data, email=form.email.data, password=hashed_password)
+        type = ''
+        if form.type.data=='Doctor':
+            type = 'd'
+        else:
+            type = 'p'
+        user = User(username=form.username.data, email=form.email.data, password=hashed_password, type=type)
         db.session.add(user)
         db.session.commit()
+        u = User.query.filter_by(username=form.username.data).first()
+        if type == 'd':
+            doc = Doctors(user_id=u.id, specialisation=form.specialisation.data, license_no=form.license_no.data, license_file = form.license_file.data.filename, signature_file = form.signature_file.data.filename)
+            db.session.add(doc)
+            db.session.commit()
+        else:
+            pat = Patients(user_id=u.id, is_diabetic=form.is_diabetic.data, hypertension=form.hypertension.data)
+            db.session.add(pat)
+            db.session.commit()
         flash(f'Account created. You can now login.', 'success')
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
