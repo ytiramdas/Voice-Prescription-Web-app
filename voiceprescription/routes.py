@@ -5,7 +5,7 @@ from voiceprescription import app, db, bcrypt
 from voiceprescription.forms import BookAppointment, PrescriptionForm, LoginForm, RegistrationForm, GetPrescriptionsForm
 from datetime import date
 from flask.globals import request
-from voiceprescription.models import Doctors, Patients, User
+from voiceprescription.models import Appointments, Doctors, Patients, User
 from werkzeug.utils import secure_filename
 import os, secrets
 
@@ -175,7 +175,16 @@ def doctorhistory():
 def bookappointment():
     form = BookAppointment()
     if form.validate_on_submit():
+        appointment = Appointments()
         flash('Appointment is Booked successfully, Check your appointments for confirmation', 'success')
+        p_id = current_user.id
+        all_doc = Doctors.query.filter_by(specialisation=form.specialisation.data).all()
+        for doc in all_doc:
+            app = Appointments.query.filter_by(doctor_id=doc.id).all()
+            if not app:
+
+        print(all_doc)
+        # book_appointment = Appointments()
         print(form.specialisation.data)
         print(form.date_of_appointment.data)
         return redirect(url_for('homepatient'))
