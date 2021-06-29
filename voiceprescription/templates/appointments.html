@@ -1,13 +1,66 @@
 {% extends "layout.html" %}
 {% block content %}
 <h1>Appointments</h1>
+<br>
 <div>
-    <div class="card w-75">
-        <div class="card-body">
-          <h5 class="card-title">Card title</h5>
-          <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-          <a href="#" class="btn btn-primary">Button</a>
-        </div>
-      </div>
+  {% if appointments %}
+  {% for appoint in appointments %}
+  <div class="card w-75">
+    <div class="card-body">
+      <h5 class="card-title">Appointment ID {{appoint[0].id}}</h5>
+      <p class="card-text">
+        <table>
+          <tr>
+            {% if current_user.type == 'd' %}
+            <td>Patient Username: </td>
+            {% else %}
+            <td>Doctor Username: </td>
+            {% endif %}
+            <td>{{appoint.username}}</td>
+          </tr>
+          <tr>
+            {% if current_user.type == 'd' %}
+            <td>Patient Username: </td>
+            {% else %}
+            <td>Doctor Username: </td>
+            {% endif %}
+            <td>{{appoint.email}}</td>
+          </tr>
+          <tr>
+            {% if current_user.type == 'd' %}
+            <td>Specialization required: </td>
+            {% else %}
+            <td>Specialization: </td>
+            {% endif %}
+            <td>{{appoint[0].specialisation}}</td>
+          </tr>
+          <tr>
+            <td>Date and Time of Appointment: </td>
+            <td>{{appoint[0].time_of_appointment}}</td>
+          </tr>
+          <tr>
+            <td>Doctor Confirmation: </td>
+            {% if appoint[0].doctor_confirmation %}
+            <td>Appointment Scheduled</td>
+            {% else %}
+            <td>Doctor did not accept</td>
+            {% endif %}
+          </tr>
+        </table>
+      </p>
+      {% if current_user.type == 'd' and appoint[0].doctor_confirmation==0 %}
+      <a href="{{ url_for('accept_appointment', appoint_id=appoint[0].id) }}" class="btn btn-primary">Accept</a>
+      <a href="{{ url_for('deny_appointment', appoint_id=appoint[0].id) }}" class="btn btn-danger">Busy</a>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+  {% else %}
+  <div class="card w-75">
+    <div class="card-body">
+      <p class="card-text">No Appointments</p>
+    </div>
+  </div>
+  {% endif %}
 </div>
 {% endblock %}

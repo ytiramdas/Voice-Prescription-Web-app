@@ -48,6 +48,8 @@ class Appointments(db.Model):
     doctor_confirmation = db.Column(db.Integer, nullable=False, default='0')
     time_of_appointment = db.Column(db.DateTime, nullable=False)
     time_of_appointment_cnf = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    doctor = relationship("User", foreign_keys=[doctor_id])
+    patient = relationship("User", foreign_keys=[patient_id])
 
     def __repr__(self):
-        return f"Appointment('{self.id}')"
+        return f"Appointment('{self.id}', '{self.specialisation}', '{self.time_of_appointment}', '{self.time_of_appointment_cnf}', '{self.doctor_id}', '{self.patient_id}')"

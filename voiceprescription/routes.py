@@ -3,11 +3,17 @@ from flask import render_template, url_for, flash, redirect, current_app, reques
 from flask_login import login_user, current_user, logout_user, login_required
 from voiceprescription import app, db, bcrypt
 from voiceprescription.forms import BookAppointment, PrescriptionForm, LoginForm, RegistrationForm, GetPrescriptionsForm
-from datetime import date
+from datetime import date, datetime
 from flask.globals import request
-from voiceprescription.models import Doctors, Patients, User
+from voiceprescription.models import Appointments, Doctors, Patients, User
 from werkzeug.utils import secure_filename
 import os, secrets
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy import or_, and_
+from sqlalchemy import create_engine
+engine = create_engine('sqlite:///site.db')
+Session = sessionmaker(bind = engine)
+session = Session()
 
 prescriptions = [
     {
@@ -175,12 +181,99 @@ def doctorhistory():
 def bookappointment():
     form = BookAppointment()
     if form.validate_on_submit():
-        flash('Appointment is Booked successfully, Check your appointments for confirmation', 'success')
+        appointment = Appointments(patient_id=current_user.id, time_of_appointment=form.date_of_appointment.data, specialisation=form.specialisation.data)
+        print(appointment)
+        all_doc = Doctors.query.filter_by(specialisation=form.specialisation.data).all()
+        if all_doc:
+            for doc in all_doc:
+                app = Appointments.query.filter_by(doctor_id=doc.user_id).all()
+                print(app)
+                if app==[]:
+                    print(doc.user_id)
+                    appointment.doctor_id = doc.user_id
+                    break
+        else:
+            flash('Appointment couldn\'t be booked as there are no doctors registered with that specialisation', 'danger')
+            return redirect(url_for('homepatient'))
+        
+        if not appointment.doctor_id:
+            flag = 0
+            for doc in all_doc:
+                app = Appointments.query.filter_by(doctor_id=doc.user_id).all()
+                if abs((app.time_of_appointment - form.date_of_appointment.data).total_seconds() / 60.0) > 30:
+                    appointment.doctor_id = doc.user_id
+                    flag = 1
+                    break;
+            if flag == 0:
+                flash('Appointment couldn\'t be booked as there are no doctors free at that time, Book at other time', 'danger')
+                return redirect(url_for('homepatient'))
+        print(all_doc)
+        print(appointment)
         print(form.specialisation.data)
         print(form.date_of_appointment.data)
+        db.session.add(appointment)
+        db.session.commit()
+        flash('Appointment is Booked successfully, Check your appointments for confirmation', 'success')
         return redirect(url_for('homepatient'))
     return render_template('bookappointment.html', form=form)
 
 @app.route('/appointments')
 def appointments():
-    return render_template('appointments.html')
+    appointments = []
+    if current_user.type == 'p':
+        appointments = Appointments.query.join(User, (User.id == Appointments.doctor_id)).add_columns(User.username, User.email).filter(Appointments.patient_id == current_user.id).order_by(Appointments.time_of_appointment.desc()).all()
+    else:
+        appointments = Appointments.query.join(User, (User.id == Appointments.patient_id)).add_columns(User.username, User.email).filter(Appointments.doctor_id == current_user.id).order_by(Appointments.time_of_appointment.desc()).all()
+    print(appointments)
+    for i in appointments:
+        print(i[0].id)
+    return render_template('appointments.html', appointments = appointments)
+
+@app.route('/appointments/<int:appoint_id>')
+def accept_appointment(appoint_id):
+    print(appoint_id)
+    appointment = Appointments.query.filter_by(id = appoint_id).first()
+    appointment.doctor_confirmation = 1
+    appointment.time_of_appointment_cnf = datetime.utcnow()
+    db.session.commit()
+    return redirect(url_for('appointments'))
+
+@app.route('/appointments/<int:appoint_id>')
+def deny_appointment(appoint_id):
+    print(appoint_id)
+    appointment = Appointments.query.filter_by(id = appoint_id).first()
+    print(appointment)
+    all_doc = Doctors.query.filter_by(specialisation=appointment.specialisation).all()
+    if all_doc:
+        for doc in all_doc:
+            if doc.id != appointment.doctor_id:
+                app = Appointments.query.filter_by(doctor_id=doc.user_id).all()
+                print(app)
+                if app==[]:
+                    print(doc.user_id)
+                    appointment.doctor_id = doc.user_id
+                    break
+    else:
+        flash('Appointment couldn\'t be booked as there are no doctors registered with that specialisation', 'danger')
+        return redirect(url_for('homedoctor'))
+    
+    if not appointment.doctor_id:
+        flag = 0
+        for doc in all_doc:
+            app = Appointments.query.filter_by(doctor_id=doc.user_id).all()
+            if abs((app.time_of_appointment - appointment.date_of_appointment).total_seconds() / 60.0) > 30:
+                appointment.doctor_id = doc.user_id
+                flag = 1
+                break;
+        if flag == 0:
+            flash('Appointment couldn\'t be booked as there are no doctors free at that time, Book at other time', 'danger')
+            return redirect(url_for('homepatient'))
+    print(all_doc)
+    print(appointment)
+    print(form.specialisation.data)
+    print(form.date_of_appointment.data)
+    db.session.add(appointment)
+    db.session.commit()
+    flash('Appointment is Booked successfully, Check your appointments for confirmation', 'success')
+    
+    return redirect(url_for('appointments'))
