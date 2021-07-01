@@ -5,7 +5,7 @@ from voiceprescription import app, db, bcrypt
 from voiceprescription.forms import BookAppointment, PrescriptionForm, LoginForm, RegistrationForm, GetPrescriptionsForm
 from datetime import date, datetime
 from flask.globals import request
-from voiceprescription.models import Appointments, Doctors, Patients, User
+from voiceprescription.models import Appointments, Doctors, Patients, User, Prescriptions
 from werkzeug.utils import secure_filename
 import os, secrets
 from sqlalchemy.orm import sessionmaker
@@ -131,6 +131,7 @@ def homepatient():
 def prescription():
     form = PrescriptionForm()
     if form.validate_on_submit():
+        p = Prescriptions()
         d = dict()
         d['doctor_name']= 'Corey Schafer'
         d['patient_name']=request.form['first_name'] + ' ' + request.form['last_name']
@@ -240,40 +241,6 @@ def accept_appointment(appoint_id):
 
 @app.route('/appointments/<int:appoint_id>')
 def deny_appointment(appoint_id):
-    print(appoint_id)
-    appointment = Appointments.query.filter_by(id = appoint_id).first()
-    print(appointment)
-    all_doc = Doctors.query.filter_by(specialisation=appointment.specialisation).all()
-    if all_doc:
-        for doc in all_doc:
-            if doc.id != appointment.doctor_id:
-                app = Appointments.query.filter_by(doctor_id=doc.user_id).all()
-                print(app)
-                if app==[]:
-                    print(doc.user_id)
-                    appointment.doctor_id = doc.user_id
-                    break
-    else:
-        flash('Appointment couldn\'t be booked as there are no doctors registered with that specialisation', 'danger')
-        return redirect(url_for('homedoctor'))
-    
-    if not appointment.doctor_id:
-        flag = 0
-        for doc in all_doc:
-            app = Appointments.query.filter_by(doctor_id=doc.user_id).all()
-            if abs((app.time_of_appointment - appointment.date_of_appointment).total_seconds() / 60.0) > 30:
-                appointment.doctor_id = doc.user_id
-                flag = 1
-                break;
-        if flag == 0:
-            flash('Appointment couldn\'t be booked as there are no doctors free at that time, Book at other time', 'danger')
-            return redirect(url_for('homepatient'))
-    print(all_doc)
-    print(appointment)
-    print(form.specialisation.data)
-    print(form.date_of_appointment.data)
-    db.session.add(appointment)
-    db.session.commit()
-    flash('Appointment is Booked successfully, Check your appointments for confirmation', 'success')
-    
+    Appointments.query.filter_by(id=appoint_id).delete()
+    flash('Appointment is deleted', 'success')
     return redirect(url_for('appointments'))

@@ -1,5 +1,5 @@
 from voiceprescription import db, bcrypt
-from voiceprescription.models import User,Doctors,Patients
+from voiceprescription.models import User,Doctors,Patients,Appointments,Prescriptions
 
 db.drop_all()
 db.create_all()

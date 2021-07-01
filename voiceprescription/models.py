@@ -46,6 +46,7 @@ class Appointments(db.Model):
     specialisation = db.Column(db.String(30), nullable=False)
     doctor_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     doctor_confirmation = db.Column(db.Integer, nullable=False, default='0')
+    doctor_change = db.Column(db.Integer, nullable=False, default='0')
     time_of_appointment = db.Column(db.DateTime, nullable=False)
     time_of_appointment_cnf = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     doctor = relationship("User", foreign_keys=[doctor_id])
@@ -53,3 +54,19 @@ class Appointments(db.Model):
 
     def __repr__(self):
         return f"Appointment('{self.id}', '{self.specialisation}', '{self.time_of_appointment}', '{self.time_of_appointment_cnf}', '{self.doctor_id}', '{self.patient_id}')"
+
+class Prescriptions(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    patient_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    doctor_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    appointment_id = db.Column(db.Integer, db.ForeignKey('appointments.id'))
+    date_and_time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    prescription = db.Column(db.String(150), nullable=False)
+    diagnosis = db.Column(db.String(150), nullable=False)
+    symptoms = db.Column(db.String(150), nullable=False)
+    advice = db.Column(db.String(150), nullable=False)
+    sign = db.Column(db.String(30), nullable=False)
+    doctor = relationship("User", foreign_keys=[doctor_id])
+    patient = relationship("User", foreign_keys=[patient_id])
+    def __repr__(self):
+        return f"Prescription('{self.id}', '{self.patient_id}', '{self.doctor_id}', '{self.prescription}','{self.diagnosis}', '{self.advice}', '{self.symptoms}')"

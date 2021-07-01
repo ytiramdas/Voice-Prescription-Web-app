@@ -3,6 +3,13 @@
     <div class="content padL10per">
         <div class="padTB24"></div>
         <h1>Patient History</h1>
+        <br>
+        <div>
+            <a type="button" class="btn btn-outline-info" href="{{ url_for('prescription') }}">
+                Create Prescription
+            </a>
+        </div>
+        <br>
         {% for prescription in prescriptions %}
         <table>
             <caption></caption>
