@@ -1,12 +1,12 @@
 {% extends "layout.html" %}
 {% block content %}
-<h1>Appointments</h1>
+<h1>Cancelled Appointments</h1>
 <br>
 <div>
-  <a type="button" class="btn btn-outline-info" href="{{ url_for('cancelled_appointments') }}">
-      Cancelled Appointments
-  </a>
-</div>
+    <a type="button" class="btn btn-outline-info" href="{{ url_for('appointments') }}">
+        Active Appointments
+    </a>
+  </div>
 <br>
 <div>
   {% if appointments %}
@@ -48,22 +48,10 @@
           </tr>
           <tr>
             <td>Doctor Confirmation: </td>
-            {% if appoint.doctor_confirmation %}
-            <td>Appointment Scheduled</td>
-            {% else %}
-            <td>Doctor did not accept</td>
-            {% endif %}
+            <td>Cancelled</td>
           </tr>
         </table>
       </p>
-      {% if current_user.type == 'd' %}
-      {% if appoint.doctor_confirmation==0 %}
-      <a href="{{ url_for('accept_appointment', appoint_id=appoint.id) }}" class="btn btn-primary">Accept</a>
-      <a href="{{ url_for('deny_appointment', appoint_id=appoint.id) }}" class="btn btn-danger">Busy</a>
-      {% else %}
-      <a href="{{ url_for('create_prescription', appoint_id=appoint.id) }}" class="btn btn-primary">Create Prescriptions</a>
-      {% endif %}
-      {% endif %}
     </div>
   </div>
   {% endfor %}

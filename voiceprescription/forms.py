@@ -78,8 +78,6 @@ class PrescriptionForm(FlaskForm):
                        validators=[DataRequired(), validators.NumberRange(min=1, max=100)])
     gender = SelectField('Gender', choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')],
                          validators=[DataRequired()])
-    prescription_number = IntegerField('Prescription Number',
-                                       validators=[DataRequired(), validators.NumberRange(min=1000, max=9999)])
     medicines = TextAreaField('Medicines',
                               validators=[DataRequired(), Length(min=10, max=500)])
     symptoms = TextAreaField('Symptoms',

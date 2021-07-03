@@ -125,37 +125,58 @@ def homedoctor():
 
 @app.route('/homepatient')
 def homepatient():
+    appointments = Appointments.query.filter(and_(Appointments.patient_id == current_user.id, Appointments.doctor_change==-1, Appointments.doctor_confirmation==0)).order_by(Appointments.time_of_appointment.desc()).all()
+    if appointments:
+        for a in appointments:
+            flash("The appointment "+ str(a.id) +" was cancelled as there were no doctors available at that time", 'danger')
+            a.doctor_confirmation = 1
+        db.session.commit()
+    appointments = Appointments.query.filter(and_(Appointments.patient_id == current_user.id, Appointments.doctor_change==1, Appointments.doctor_confirmation==0)).order_by(Appointments.time_of_appointment.desc()).all()
+    if appointments:
+        for a in appointments:
+            flash("For appointment "+ str(a.id) +", new doctor was assigned", 'success')
+            a.doctor_change = 0
+        db.session.commit()
     return render_template('homepatient.html', type="Patient")
- 
-@app.route('/prescription', methods=['GET', 'POST'])
-def prescription():
+
+@app.route('/prescription/<int:appoint_id>', methods=['GET', 'POST'])
+def create_prescription(appoint_id):
+    print(appoint_id)
     form = PrescriptionForm()
     if form.validate_on_submit():
-        p = Prescriptions()
-        d = dict()
-        d['doctor_name']= 'Corey Schafer'
-        d['patient_name']=request.form['first_name'] + ' ' + request.form['last_name']
-        today = date.today()
-        d['date_of_diagnosis']= today.strftime("%B %d, %Y")
-        d['age'] = request.form['age']
-        d['gender'] = request.form['gender']
-        d['prescription']= request.form['medicines']
-        d['diagnosis'] = request.form['diagnosis']
-        d['symptoms'] = request.form['symptoms']
-        d['advice'] = request.form['advice']
-        d['signature'] = request.form['first_name'] + '....'
-        prescriptions.append(d)
+        a = Appointments.query.filter_by(id=appoint_id).first()
+        p = Prescriptions(patient_id=a.patient_id, doctor_id=a.doctor_id, age=form.age.data, appointment_id=appoint_id)
+        p.patient_name = form.first_name.data + ' ' + form.last_name.data
+        p.prescription = form.medicines.data
+        p.diagnosis = form.diagnosis.data
+        p.symptoms = form.symptoms.data
+        p.advice = form.advice.data
+        doc = Doctors.query.filter_by(user_id = a.doctor_id).first()
+        p.sign = doc.signature_file
+        db.session.add(p)
+        db.session.commit()
         flash('Precription sent to Patient!', 'success')
         return redirect(url_for('homedoctor'))
     return render_template('prescription.html', title="Create Prescription", form=form)
- 
-@app.route('/getprescriptionforpatient', methods=['GET', 'POST'])
-def getprescriptionforpatient():
-    patient_info = [i for i in prescriptions if i['patient_name']=='Yasaswini Tiramdas']
-    return render_template('getprescriptionsforpatient.html', prescriptions=patient_info)
+
+@app.route('/history')
+def history():
+    if current_user.type=='p':
+        patient_pres = Prescriptions.query.filter_by(patient_id=current_user.id).order_by(Prescriptions.date_and_time.desc()).all()
+        return render_template('displayprescriptions.html', prescriptions=patient_pres)
+    else:
+        doctor_pres = Prescriptions.query.filter_by(doctor_id=current_user.id).order_by(Prescriptions.date_and_time.desc()).all()
+        return render_template('displayprescriptions.html', prescriptions=doctor_pres)
+
 
 @app.route('/getprescriptionfordoctor', methods=['GET', 'POST'])
 def getprescriptionfordoctor():
+    doctor_pres = Prescriptions.query.filter_by(doctor_id=current_user.id).order_by(Prescriptions.date_and_time.desc()).all()
+    return render_template('displayprescriptions.html', prescriptions=doctor_pres)
+
+
+@app.route('/getprescription', methods=['GET', 'POST'])
+def getprescriptionhistory():
     form = GetPrescriptionsForm()
     if form.validate_on_submit():
         flash('Got the precriptions!', 'success')
@@ -173,11 +194,6 @@ def getprescription(p_name):
         return redirect('getprescriptionfordoctor')
     return render_template('getprescription.html', prescriptions = patient_info)
 
-@app.route('/doctorhistory')
-def doctorhistory():
-    patient_info = [i for i in prescriptions if i['doctor_name']=='Corey Schafer']
-    return render_template('doctorhistory.html', prescriptions = patient_info)
-
 @app.route('/bookappointment', methods=['GET', 'POST'])
 def bookappointment():
     form = BookAppointment()
@@ -187,7 +203,7 @@ def bookappointment():
         all_doc = Doctors.query.filter_by(specialisation=form.specialisation.data).all()
         if all_doc:
             for doc in all_doc:
-                app = Appointments.query.filter_by(doctor_id=doc.user_id).all()
+                app = Appointments.query.filter(and_(Appointments.doctor_id==doc.user_id, Appointments.doctor_change!=-1)).all()
                 print(app)
                 if app==[]:
                     print(doc.user_id)
@@ -200,11 +216,12 @@ def bookappointment():
         if not appointment.doctor_id:
             flag = 0
             for doc in all_doc:
-                app = Appointments.query.filter_by(doctor_id=doc.user_id).all()
-                if abs((app.time_of_appointment - form.date_of_appointment.data).total_seconds() / 60.0) > 30:
-                    appointment.doctor_id = doc.user_id
-                    flag = 1
-                    break;
+                appoints = Appointments.query.filter(and_(Appointments.doctor_id==doc.user_id, Appointments.doctor_change!=-1)).all()
+                for app in appoints:
+                    if abs((app.time_of_appointment - form.date_of_appointment.data).total_seconds() / 60.0) > 30:
+                        appointment.doctor_id = doc.user_id
+                        flag = 1
+                        break;
             if flag == 0:
                 flash('Appointment couldn\'t be booked as there are no doctors free at that time, Book at other time', 'danger')
                 return redirect(url_for('homepatient'))
@@ -222,15 +239,18 @@ def bookappointment():
 def appointments():
     appointments = []
     if current_user.type == 'p':
-        appointments = Appointments.query.join(User, (User.id == Appointments.doctor_id)).add_columns(User.username, User.email).filter(Appointments.patient_id == current_user.id).order_by(Appointments.time_of_appointment.desc()).all()
+        appointments = Appointments.query.filter(and_(Appointments.patient_id == current_user.id, Appointments.doctor_change!=-1)).order_by(Appointments.time_of_appointment.desc()).all()
     else:
-        appointments = Appointments.query.join(User, (User.id == Appointments.patient_id)).add_columns(User.username, User.email).filter(Appointments.doctor_id == current_user.id).order_by(Appointments.time_of_appointment.desc()).all()
-    print(appointments)
+        appointments = Appointments.query.filter(and_(Appointments.doctor_id == current_user.id, Appointments.doctor_change!=-1)).order_by(Appointments.time_of_appointment.desc()).all()
+    app = []
     for i in appointments:
-        print(i[0].id)
-    return render_template('appointments.html', appointments = appointments)
+        p = Prescriptions.query.filter_by(appointment_id=i.id)
+        if not p:
+            app.append(i)
+    print(appointments)
+    return render_template('appointments.html', appointments = app)
 
-@app.route('/appointments/<int:appoint_id>')
+@app.route('/appointments/<int:appoint_id>/accept')
 def accept_appointment(appoint_id):
     print(appoint_id)
     appointment = Appointments.query.filter_by(id = appoint_id).first()
@@ -239,8 +259,47 @@ def accept_appointment(appoint_id):
     db.session.commit()
     return redirect(url_for('appointments'))
 
-@app.route('/appointments/<int:appoint_id>')
+@app.route('/appointments/<int:appoint_id>/deny')
 def deny_appointment(appoint_id):
-    Appointments.query.filter_by(id=appoint_id).delete()
+    print(appoint_id)
+    a = Appointments.query.filter_by(id=appoint_id).first()
+    old_doc_id = a.doctor_id
+    all_doc =  Doctors.query.filter(and_(Doctors.specialisation==a.specialisation, Doctors.user_id!=old_doc_id)).all()
+    flag = 0
+    if all_doc:
+        for doc in all_doc:
+            app = Appointments.query.filter(and_(Appointments.doctor_id==doc.user_id, Appointments.doctor_change!=-1)).all()
+            print(app)
+            if app==[]:
+                print(doc.user_id)
+                a.doctor_id = doc.user_id
+                a.doctor_change = 1
+                flag=1
+                break
+        if flag==0:
+            flag = 0
+            for doc in all_doc:
+                appoints = Appointments.query.filter(and_(Appointments.doctor_id==doc.user_id, Appointments.doctor_change!=-1)).all()
+                for app in appoints:
+                    if abs((app.time_of_appointment - a.time_of_appointment).total_seconds() / 60.0) > 30:
+                        print(doc.user_id)
+                        a.doctor_id = doc.user_id
+                        a.doctor_change = 1
+                        flag = 1
+                        break;
+            if flag == 0:
+                a.doctor_change = -1
+    if flag==0:
+        a.doctor_change = -1
+    db.session.commit()
     flash('Appointment is deleted', 'success')
     return redirect(url_for('appointments'))
+
+@app.route('/cancelled_appointments')
+def cancelled_appointments():
+    appointments = []
+    if current_user.type=='p':
+        appointments = Appointments.query.filter(and_(Appointments.patient_id==current_user.id, Appointments.doctor_change==-1)).order_by(Appointments.time_of_appointment.desc()).all()
+    else:
+        appointments = Appointments.query.filter(and_(Appointments.doctor_id==current_user.id, Appointments.doctor_change==-1)).order_by(Appointments.time_of_appointment.desc()).all()
+    return render_template('cancelled_appointments.html', appointments = appointments)

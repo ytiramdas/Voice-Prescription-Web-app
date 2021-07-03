@@ -59,6 +59,8 @@ class Prescriptions(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     patient_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     doctor_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    patient_name = db.Column(db.String(30), nullable=False)
+    age = db.Column(db.Integer, nullable=False)
     appointment_id = db.Column(db.Integer, db.ForeignKey('appointments.id'))
     date_and_time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     prescription = db.Column(db.String(150), nullable=False)
@@ -68,5 +70,6 @@ class Prescriptions(db.Model):
     sign = db.Column(db.String(30), nullable=False)
     doctor = relationship("User", foreign_keys=[doctor_id])
     patient = relationship("User", foreign_keys=[patient_id])
+    appointments = relationship("Appointments", foreign_keys=[appointment_id])
     def __repr__(self):
         return f"Prescription('{self.id}', '{self.patient_id}', '{self.doctor_id}', '{self.prescription}','{self.diagnosis}', '{self.advice}', '{self.symptoms}')"

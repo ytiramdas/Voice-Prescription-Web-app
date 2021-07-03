@@ -21,6 +21,7 @@
     <table>
         <caption></caption>
         <tbody>
+            {% if current_user.type == 'p' %}
             <tr>
                 <td><strong>Doctor Username: </strong>{{prescription.doctor.username}}</td>
                 <td><strong>Date: </strong>{{prescription.date_and_time}}</td>
@@ -28,6 +29,18 @@
             <tr>
                 <td><strong>Doctor Email: </strong>{{prescription.doctor.email}}</td>
             </tr>
+            {% else %}
+            <tr>
+                <td><strong>Patient Username: </strong>{{prescription.patient.username}}</td>
+                <td><strong>Date: </strong>{{prescription.date_and_time}}</td>
+            </tr>
+            <tr>
+                <td><strong>Patient Name: </strong>{{prescription.patient_name}}</td>
+            </tr>
+            <tr>
+                <td><strong>Patient Email: </strong>{{prescription.patient.email}}</td>
+            </tr>
+            {% endif %}
             <tr>
                 <td><strong>Medicine: </strong>{{prescription.prescription}}</td>
             </tr>
