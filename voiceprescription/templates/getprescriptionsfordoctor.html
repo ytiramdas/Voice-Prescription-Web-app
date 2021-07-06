@@ -1,41 +1,44 @@
 {% extends "layout.html" %}
 {% block content %}
     <div class="content padL10per">
-        <form method="POST" action="" novalidate>
-            {{ form.hidden_tag() }}
-            <fieldset class="form-group row col-lg-8 col-md-8">
-                <legend class="border-bottom mb-4 col-lg-12 col-md-12 col-sm-12">Get Patient Prescription</legend>
-                <div class="form-group col-lg-6 col-md-6">
-                    {{ form.name.label(class="form-label") }}
-                    {% if form.name.errors %}
-                        {{ form.name(class="form-control is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.name.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.name(class="form-control ") }}
-                    {% endif %}
-                </div>
-                <div class="form-group col-lg-6 col-md-6">
-                    {{ form.email.label(class="form-label") }}
-                    {% if form.email.errors %}
-                        {{ form.email(class="form-control is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.to_date.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.email(class="form-control ") }}
-                    {% endif %}
-                </div>
-            </fieldset>
-            <div class="form-group col-lg-8 col-md-8" style="padding-top: 10px;">
-                {{ form.submit(class="btn btn-outline-info") }}
-            </div>
-        </form>
-        
+        <div class="padTB24"></div>
+        <h1>Patient History</h1>
+        <br>
+        <div>
+            <a type="button" class="btn btn-outline-info" href="{{ url_for('create_prescription', appoint_id=appoint_id) }}">
+                Create Prescription
+            </a>
+        </div>
+        <br>
+        {% for prescription in prescriptions %}
+        <table>
+            <caption></caption>
+            <tbody>
+                <tr>
+                    <td><strong>Patient Username: </strong>{{prescription.patient.username}}</td>
+                    <td><strong>Date: </strong>{{prescription.date_and_time}}</td>
+                </tr>
+                <tr>
+                    <td><strong>Patient Name: </strong>{{prescription.patient_name}}</td>
+                </tr>
+                <tr>
+                    <td><strong>Patient Email: </strong>{{prescription.patient.email}}</td>
+                </tr>
+                <tr>
+                    <td><strong>Medicine: </strong>{{prescription.prescription}}</td>
+                </tr>
+                <tr>
+                    <td><strong>Diagnosis: </strong>{{prescription.diagnosis}}</td>
+                </tr>
+                <tr>
+                    <td><strong>Symptoms: </strong>{{prescription.symptoms}}</td>
+                </tr>
+                <tr>
+                    <td><strong>Advice: </strong>{{prescription.advice}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <br/>
+        {% endfor %}
     </div>
 {% endblock content %}

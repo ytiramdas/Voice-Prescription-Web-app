@@ -139,6 +139,10 @@ def homepatient():
         db.session.commit()
     return render_template('homepatient.html', type="Patient")
 
+@app.route('/account')
+def account():
+    return render_template('account.html', title='Account')
+
 @app.route('/prescription/<int:appoint_id>', methods=['GET', 'POST'])
 def create_prescription(appoint_id):
     print(appoint_id)
@@ -157,7 +161,7 @@ def create_prescription(appoint_id):
         db.session.commit()
         flash('Precription sent to Patient!', 'success')
         return redirect(url_for('homedoctor'))
-    return render_template('prescription.html', title="Create Prescription", form=form)
+    return render_template('prescription.html', title="Create Prescription", form=form, appoint_id=appoint_id)
 
 @app.route('/history')
 def history():
@@ -169,30 +173,16 @@ def history():
         return render_template('displayprescriptions.html', prescriptions=doctor_pres)
 
 
-@app.route('/getprescriptionfordoctor', methods=['GET', 'POST'])
-def getprescriptionfordoctor():
-    doctor_pres = Prescriptions.query.filter_by(doctor_id=current_user.id).order_by(Prescriptions.date_and_time.desc()).all()
-    return render_template('displayprescriptions.html', prescriptions=doctor_pres)
+@app.route('/getprescriptionfordoctor/<int:appoint_id>', methods=['GET', 'POST'])
+def getprescriptionfordoctor(appoint_id):
+    print(appoint_id)
+    app = Appointments.query.filter_by(id = appoint_id).first()
+    doctor_pres = Prescriptions.query.filter_by(patient_id=app.patient_id).order_by(Prescriptions.date_and_time.desc()).all()
+    if doctor_pres == []:
+        flash("No previous records of the user", 'success')
+        return redirect(url_for('create_prescription', appoint_id=appoint_id))
+    return render_template('getprescriptionsfordoctor.html', prescriptions=doctor_pres, appoint_id=appoint_id)
 
-
-@app.route('/getprescription', methods=['GET', 'POST'])
-def getprescriptionhistory():
-    form = GetPrescriptionsForm()
-    if form.validate_on_submit():
-        flash('Got the precriptions!', 'success')
-        p_name = form.name.data
-        return redirect(url_for('getprescription', p_name = p_name))
-    # return render_template('getprescriptions.html', title="Create Prescription", form=form, prescriptions=prescriptions)
-    # patient_info = [i for i in prescriptions if i['patient_name']=='Yasaswini Tiramdas']
-    return render_template('getprescriptionsfordoctor.html', form=form)
-
-@app.route('/getprescription/<p_name>')
-def getprescription(p_name):
-    patient_info = [i for i in prescriptions if i['patient_name']==p_name]
-    if len(patient_info)==0:
-        flash('No users found')
-        return redirect('getprescriptionfordoctor')
-    return render_template('getprescription.html', prescriptions = patient_info)
 
 @app.route('/bookappointment', methods=['GET', 'POST'])
 def bookappointment():
@@ -244,10 +234,9 @@ def appointments():
         appointments = Appointments.query.filter(and_(Appointments.doctor_id == current_user.id, Appointments.doctor_change!=-1)).order_by(Appointments.time_of_appointment.desc()).all()
     app = []
     for i in appointments:
-        p = Prescriptions.query.filter_by(appointment_id=i.id)
-        if not p:
+        p = Prescriptions.query.filter_by(appointment_id=i.id).first()
+        if p == None:
             app.append(i)
-    print(appointments)
     return render_template('appointments.html', appointments = app)
 
 @app.route('/appointments/<int:appoint_id>/accept')

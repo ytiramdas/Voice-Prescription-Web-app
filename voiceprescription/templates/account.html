@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="content-section">
+  <div class="media row">
+    <div class="col-md-4">
+      <img class="rounded-circle account-img" src="{{ image_file }}">
+    </div>
+    <div class="media-body col-md-8">
+      <h2 class="account-heading">{{ current_user.username }}</h2>
+      <p class="text-secondary">{{ current_user.email }}</p>
+      {% if current_user.type == 'p' %}
+      <p class="text-secondary">Patient</p>
+      {% else %}
+      <p class="text-secondary">Doctor</p>
+      {% endif %}
+    </div>
+  </div>
+  
+</div>
+
+
+{% endblock content %}

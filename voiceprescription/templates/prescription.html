@@ -2,7 +2,7 @@
 {% block content %}
     <div class="content-section padL10per">
         <div class="Container">
-            <a type="button" class="btn btn-outline-info" href="{{ url_for('getprescriptionfordoctor')}}">
+            <a type="button" class="btn btn-outline-info" href="{{ url_for('getprescriptionfordoctor', appoint_id=appoint_id)}}">
                 Get recent prescriptions of patient
             </a>
         </div><br>
