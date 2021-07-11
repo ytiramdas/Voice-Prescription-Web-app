@@ -1,20 +1,24 @@
 {% extends "layout.html" %}
 {% block content %}
 <div class="content-section">
-  <div class="media row">
-    <div class="col-md-4">
-      <img class="rounded-circle account-img" src="{{ image_file }}">
-    </div>
-    <div class="media-body col-md-8">
+    <div class="container">
       <h2 class="account-heading">{{ current_user.username }}</h2>
-      <p class="text-secondary">{{ current_user.email }}</p>
       {% if current_user.type == 'p' %}
       <p class="text-secondary">Patient</p>
       {% else %}
       <p class="text-secondary">Doctor</p>
       {% endif %}
+      <p class="text-secondary"><b>Email : </b>{{ current_user.email }}</p>
+      {% if current_user.type == 'p' %}
+      <p class="text-secondary"><b>Have Diabetics? : </b> {{details.is_diabetic}}</p>
+      <p class="text-secondary"><b>Hypertention Level : </b> {{details.hypertension}}</p>
+      {% else %}
+      <p class="text-secondary"><b>Specialisation : </b> {{details.specialisation}}</p>
+      <p class="text-secondary"><b>License Number : </b> {{details.license_no}}</p>
+      <embed src="{{ license_file }}" width="800px" height="2100px" />
+      {% endif %}
+
     </div>
-  </div>
   
 </div>
 

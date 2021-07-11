@@ -141,7 +141,14 @@ def homepatient():
 
 @app.route('/account')
 def account():
-    return render_template('account.html', title='Account')
+    details = []
+    license_file = ""
+    if current_user.type == 'd':
+        details = Doctors.query.filter_by(user_id = current_user.id).first()
+        license_file = url_for('static', filename='licenses/' + details.license_file)
+    else:
+        details = Patients.query.filter_by(user_id = current_user.id).first()
+    return render_template('account.html', title='Account', details = details, license_file = license_file)
 
 @app.route('/prescription/<int:appoint_id>', methods=['GET', 'POST'])
 def create_prescription(appoint_id):
