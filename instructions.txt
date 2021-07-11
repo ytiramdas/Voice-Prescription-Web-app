@@ -1,0 +1,3 @@
+- Go to venv : venv\Scripts\activate
+- To run : python run.py
+NOTE: While creating prescription internet should be on as I am using some js files form internet.
