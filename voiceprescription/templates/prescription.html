@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
     <div class="content-section padL10per">
+        <p class="text-danger "><small>NOTE: For first name to be filled say "first name is", likewise "last name is", "age is", "symptoms ...", "medicine ....", "diagnosis ....", "advice ...".<br>Gender should be manually selected.</small></p>
         <div class="Container">
             <a type="button" class="btn btn-outline-info" href="{{ url_for('getprescriptionfordoctor', appoint_id=appoint_id)}}">
                 Get recent prescriptions of patient
@@ -124,3 +125,55 @@
         </form>
     </div>
 {% endblock content %}
+{% block script %}
+<script src="//cdnjs.cloudflare.com/ajax/libs/annyang/2.6.0/annyang.min.js"></script>
+<script>
+if (annyang) {
+  // Let's define our first command. First the text we expect, and then the function it should call
+  var commands = {
+    'first name is *tag': function(data) {
+      fname = document.getElementById("first_name");
+      fname.value = data;
+    },
+    'last name is *tag': function(data) {
+      lname = document.getElementById("last_name");
+      lname.value = data;
+    },
+    'age is *tag': function(data) {
+      age = document.getElementById("age");
+      age.value = data;
+    },
+    'symptom *tag': function(data) {
+        symptoms = document.getElementById("symptoms");
+        if(symptoms.value == ''){
+            symptoms.value += data;
+        }else{        
+            symptoms.value += ', '+data;
+        }
+    },
+    'medicine *tag': function(data) {
+        medicines = document.getElementById("medicines");
+        if(medicines.value == ''){
+            medicines.value += data;
+        }else{        
+            medicines.value += ', '+data;
+        }
+    },
+    'diagnosis *tag': function(data) {
+        diagnosis = document.getElementById("diagnosis");
+        diagnosis.value = data;
+    },
+    'advice *tag': function(data) {
+      advice = document.getElementById("advice");
+      advice.value = data;
+    }
+  };
+
+  // Add our commands to annyang
+  annyang.addCommands(commands);
+
+  // Start listening. You can call this here, or attach this call to an event, button, etc.
+  annyang.start();
+}
+</script>
+{% endblock %}

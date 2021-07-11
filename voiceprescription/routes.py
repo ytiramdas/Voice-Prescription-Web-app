@@ -219,6 +219,8 @@ def bookappointment():
                         appointment.doctor_id = doc.user_id
                         flag = 1
                         break;
+                if flag == 1:
+                    break;
             if flag == 0:
                 flash('Appointment couldn\'t be booked as there are no doctors free at that time, Book at other time', 'danger')
                 return redirect(url_for('homepatient'))

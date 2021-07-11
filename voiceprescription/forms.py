@@ -5,6 +5,8 @@ from wtforms.fields.core import DateTimeField
 from wtforms.fields.html5 import DateTimeLocalField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from voiceprescription.models import Doctors, User
+from datetime import datetime
+
 
 specialization_chocies = [('Allergists/Immunologists', 'Allergists/Immunologists'), 
 ('Anesthesiologists', 'Anesthesiologists'),
@@ -100,3 +102,7 @@ class BookAppointment(FlaskForm):
     date_of_appointment = DateTimeLocalField('Appointment Date and Time', format='%Y-%m-%dT%H:%M', validators=[DataRequired()])
     specialisation = SelectField('Specialisation for Consultation', choices = specialization_chocies, validators=[DataRequired()])
     submit = SubmitField('Book Appointment')
+
+    def validate_date_of_appointment(self, date_of_appointment):
+        if date_of_appointment.data<datetime.now():
+            raise ValidationError('Date and Time should be after current time stamp')
