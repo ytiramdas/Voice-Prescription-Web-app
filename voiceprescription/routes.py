@@ -1,5 +1,5 @@
 from inspect import signature
-from flask import render_template, url_for, flash, redirect, current_app, request
+from flask import render_template, url_for, flash, redirect, current_app, request, make_response
 from flask_login import login_user, current_user, logout_user, login_required
 from voiceprescription import app, db, bcrypt
 from voiceprescription.forms import BookAppointment, PrescriptionForm, LoginForm, RegistrationForm, GetPrescriptionsForm
@@ -11,6 +11,11 @@ import os, secrets
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import or_, and_
 from sqlalchemy import create_engine
+import pdfkit
+
+path_wkhtmltopdf = r'C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe'
+config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
+
 engine = create_engine('sqlite:///site.db')
 Session = sessionmaker(bind = engine)
 session = Session()
@@ -113,7 +118,7 @@ def register():
 @app.route("/logout")
 def logout():
     logout_user()
-    return redirect(url_for('home'))
+    return redirect(url_for('login'))
 
 @app.route('/reset_password', methods=['GET', 'POST'])
 def reset_request():
@@ -178,6 +183,16 @@ def history():
     else:
         doctor_pres = Prescriptions.query.filter_by(doctor_id=current_user.id).order_by(Prescriptions.date_and_time.desc()).all()
         return render_template('displayprescriptions.html', prescriptions=doctor_pres)
+
+@app.route('/get_pres/<int:prescription_id>')
+def get_pres(prescription_id):
+    prescription = Prescriptions.query.filter_by(id = prescription_id).first()
+    html = render_template("downloadprescription.html", prescription=prescription)
+    pdf = pdfkit.from_string(html, False, configuration=config)
+    response = make_response(pdf)
+    response.headers["Content-Type"] = "application/pdf"
+    response.headers["Content-Disposition"] = "inline; filename=output.pdf"
+    return response
 
 
 @app.route('/getprescriptionfordoctor/<int:appoint_id>', methods=['GET', 'POST'])

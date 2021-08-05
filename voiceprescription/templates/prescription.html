@@ -151,6 +151,14 @@ if (annyang) {
             symptoms.value += ', '+data;
         }
     },
+    'symptoms are *tag': function(data) {
+        symptoms = document.getElementById("symptoms");
+        if(symptoms.value == ''){
+            symptoms.value += data;
+        }else{        
+            symptoms.value += ', '+data;
+        }
+    },
     'medicine *tag': function(data) {
         medicines = document.getElementById("medicines");
         if(medicines.value == ''){
@@ -159,7 +167,15 @@ if (annyang) {
             medicines.value += ', '+data;
         }
     },
-    'diagnosis *tag': function(data) {
+    'medicines are *tag': function(data) {
+        medicines = document.getElementById("medicines");
+        if(medicines.value == ''){
+            medicines.value += data;
+        }else{        
+            medicines.value += ', '+data;
+        }
+    },
+    'diagnosis for *tag': function(data) {
         diagnosis = document.getElementById("diagnosis");
         diagnosis.value = data;
     },

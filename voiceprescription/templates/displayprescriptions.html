@@ -53,6 +53,9 @@
             <tr>
                 <td><strong>Advice: </strong>{{prescription.advice}}</td>
             </tr>
+            <tr>
+                <td><a href="{{ url_for('get_pres', prescription_id=prescription.id) }}" class="btn btn-info" target="_blank">Download Prescription</a></td>
+            </tr>
         </tbody>
     </table>
     <br />

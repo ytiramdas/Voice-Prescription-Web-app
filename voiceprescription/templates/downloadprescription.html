@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+        integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+
+    <title>Prescription</title>
+    <style>
+        .content{
+            margin: 20px;
+        }
+        h1{
+            font-size:50px;
+            color: #7cd4d0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="content">
+        <div style="text-align: center"><h1>PRESCRIPTION</h1></div>
+        <br><br>
+        <div class="container">
+            <table style="width:100%">
+                <tr>
+                    <td><strong>Doctor Username: </strong>{{prescription.doctor.username}}</td>
+                    <td><strong>Patient Username: </strong>{{prescription.patient.username}}</td>
+                </tr>
+                <tr>
+                    <td><strong>Doctor Email: </strong>{{prescription.doctor.email}}</td>
+                    <td><strong>Patient Name: </strong>{{prescription.patient_name}}</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><strong>Patient Email: </strong>{{prescription.patient.email}}</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><strong>Date: </strong>{{prescription.date_and_time}}</td>
+                </tr>
+            </table>
+        </div>
+        <hr>
+        <div class="container">
+            <div class="field">
+                <h4>Medicine</h4>
+                <p>
+                    {{prescription.prescription}}
+                </p>
+            </div>
+            <div class="field">
+                <h4>Diagnosis</h4>
+                <p>
+                    {{prescription.diagnosis}}
+                </p>
+            </div>
+            <div class="field">
+                <h4>Symptoms</h4>
+                <p>
+                    {{prescription.symptoms}}
+                </p>
+            </div>
+            <div class="field">
+                <h4>Advice</h4>
+                <p>
+                    {{prescription.advice}}
+                </p>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"
+        integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
