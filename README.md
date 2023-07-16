@@ -8,7 +8,7 @@ An application to write formatted prescriptions based on dictation from the doct
   * Copy the following command in the terminal/command-line: `git clone https://github.com/Yashi1011/Voice-Prescription-Web-app.git`
 * Move to the cloned directory
 * Create a virtual environment
-  * Make sure you install the `python3-venv` module 
+  * Make sure you install the `python3-venv` module
   * `python -m venv venv` - for windows
   * `python3 -m venv venv` - for ubuntu
 * Activate the virtual environment
@@ -20,6 +20,7 @@ An application to write formatted prescriptions based on dictation from the doct
   * `python run.py`
 
 ## Accessing database
+
 * Go to python shell in Voice-Prescription-Web-app directory
 * `from voiceprescription import db, create_app`
 * `app = create_app()`
