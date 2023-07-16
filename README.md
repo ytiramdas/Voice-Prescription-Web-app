@@ -19,4 +19,12 @@ An application to write formatted prescriptions based on dictation from the doct
 * You can now run the code
   * `python run.py`
 
+## Accessing database
+* Go to python shell in Voice-Prescription-Web-app directory
+* `from voiceprescription import db, create_app`
+* `app = create_app()`
+* `app.app_context().push()`
+* `db.create_all()` - when you add a table)
+* Do your stuff
+
 NOTE: While creating prescription internet should be ON as I used [Annyang](https://www.talater.com/annyang/) JS files form internet for speech recognition.
