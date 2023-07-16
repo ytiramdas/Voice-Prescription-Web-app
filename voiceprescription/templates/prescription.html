@@ -131,9 +131,17 @@
 if (annyang) {
   // Let's define our first command. First the text we expect, and then the function it should call
   var commands = {
+    'first name *tag': function(data) {
+      fname = document.getElementById("first_name");
+      fname.value = data;
+    },
     'first name is *tag': function(data) {
       fname = document.getElementById("first_name");
       fname.value = data;
+    },
+    'last name *tag': function(data) {
+      lname = document.getElementById("last_name");
+      lname.value = data;
     },
     'last name is *tag': function(data) {
       lname = document.getElementById("last_name");
@@ -180,6 +188,10 @@ if (annyang) {
         diagnosis.value = data;
     },
     'advice *tag': function(data) {
+      advice = document.getElementById("advice");
+      advice.value = data;
+    },
+    'advice is *tag': function(data) {
       advice = document.getElementById("advice");
       advice.value = data;
     }
